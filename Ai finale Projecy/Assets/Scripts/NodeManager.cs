@@ -41,7 +41,7 @@ public class NodeManager : MonoBehaviour
     public float rayTimer = 2;
 
 
-    Vector3 size;
+    Vector3 cube;
 
 
     
@@ -86,7 +86,7 @@ public class NodeManager : MonoBehaviour
             height = character.transform.lossyScale.y * 1.1f;
             depth = character.transform.lossyScale.z * 1.1f;
             widhtX = character.transform.lossyScale.x * 1.1f;
-            size = new Vector3(widhtX, height, depth);
+            cube = new Vector3(widhtX, height, depth);
 
             xNumber = (int)(dimensionsOfRoom.size.x / widhtX);
             zNumber = (int)(dimensionsOfRoom.size.z / depth);
@@ -100,13 +100,13 @@ public class NodeManager : MonoBehaviour
         int indexY =0;
         int indexZ = 0;
         int indexX = 0;
-        Vector3 spawnPosY = dimensionsOfRoom.min + ((size) / 2);
-        Vector3 spawnPosX = dimensionsOfRoom.min + ((size) / 2);
-        Vector3 spawnPosZ = dimensionsOfRoom.min + ((size) / 2);
+        Vector3 spawnPosY = dimensionsOfRoom.min + ((cube) / 2);
+        Vector3 spawnPosX = dimensionsOfRoom.min + ((cube) / 2);
+        Vector3 spawnPosZ = dimensionsOfRoom.min + ((cube) / 2);
         for (int y = 0; y < yNumber; ++y)
         {
             Bounds bTemp = new Bounds();
-            bTemp.size = size;
+            bTemp.size = cube;
             bTemp.center = spawnPosY;
             spawnPosZ = spawnPosY;
 
@@ -116,7 +116,7 @@ public class NodeManager : MonoBehaviour
             if (bTemp.max.y < dimensionsOfRoom.max.y)
             {
                 spawnNode(spawnPosY, parent, indexY, indexZ, indexX);
-                spawnPosY.y += size.y;
+                spawnPosY.y += cube.y;
             }
 
           
@@ -127,13 +127,13 @@ public class NodeManager : MonoBehaviour
               
                 bTemp.center = spawnPosZ;
                 spawnPosX = spawnPosZ;
-                spawnPosX.x += size.x;
+                spawnPosX.x += cube.x;
                 indexZ = z;
 
                 if (bTemp.max.z < dimensionsOfRoom.max.z && zFirst != true)
                 {
                     spawnNode(spawnPosZ, parent, indexY, indexZ, indexX);
-                    spawnPosZ.z += size.z;
+                    spawnPosZ.z += cube.z;
                 }
             
 
@@ -141,7 +141,7 @@ public class NodeManager : MonoBehaviour
                 {
                     if (zFirst)
                     {
-                        spawnPosZ.z += size.z;
+                        spawnPosZ.z += cube.z;
                         zFirst = false;
                     }
                     
@@ -150,7 +150,7 @@ public class NodeManager : MonoBehaviour
                     if (bTemp.max.x < dimensionsOfRoom.max.x)
                     {
                         spawnNode(spawnPosX, parent, indexY, indexZ, indexX);
-                        spawnPosX.x += size.x;
+                        spawnPosX.x += cube.x;
                     }
                     indexX = 0;
                    
@@ -173,8 +173,8 @@ public class NodeManager : MonoBehaviour
     
        GameObject temp = Instantiate(node, pos, Quaternion.Euler(Vector3.zero));
         Node nodeTemp = temp.GetComponent<Node>();
-        nodeTemp.size.size = size;
-        nodeTemp.size.center = pos;
+        nodeTemp.cube.size = cube;
+        nodeTemp.cube.center = pos;
         nodeTemp.x = x;
         nodeTemp.y = y;
         nodeTemp.z = z;
@@ -183,6 +183,7 @@ public class NodeManager : MonoBehaviour
         nodeTemp.index = x + z * xNumber + y * (xNumber * zNumber);
         nodeTemp.myNodeManager = this;
         nodeTemp.type = NodeTypes.Standard;
+        //nodeTemp.myNodeSysId = nodeSystems.Count + 1;
         temp.name = ("Node" + " " + nodeTemp.id.ToString());
         tempNodes.Add(nodeTemp);
         temp.transform.SetParent(parent.transform);
@@ -209,6 +210,7 @@ public class NodeManager : MonoBehaviour
         nodeSys.widht = xNumber;
         nodeSys.height = yNumber;
         nodeSys.depth = zNumber;
+        nodeSys.id = nodeSystems.Count;
 
         foreach (Node n in tempNodes)
         {
@@ -227,12 +229,19 @@ public class NodeManager : MonoBehaviour
     public class NodeSystem{
         public string name;
         public List<Node> nodes = new List<Node>();
+        public List<Node> doorNodes = new List<Node>();
         public Bounds area;
         public int id;
         public int widht;
         public int height;
         public int depth;
-        
+        private void OnDrawGizmosSelected()
+        {
+
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawCube(area.center, area.size);
+        }
+
     }
    
 

@@ -18,7 +18,7 @@ public class MoveToMouse : MonoBehaviour {
      pos = transform.position;
         foreach (Node n in nm.nodeSystems[0].nodes)
         {
-            if (n.size.Contains(pos))
+            if (n.cube.Contains(pos))
             {
                 xp = n.x;
                 yp = n.y;

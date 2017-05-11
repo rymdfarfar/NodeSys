@@ -11,7 +11,7 @@ public class Node : MonoBehaviour
 {
 
     public NodeManager myNodeManager;
-    [HideInInspector]
+    //[HideInInspector]
     public int myNodeSysId;
    
     public NodeManager.NodeTypes type;
@@ -32,7 +32,7 @@ public class Node : MonoBehaviour
     public Vector3 pos;
     public Node parent;
     [HideInInspector]
-    public Bounds size;
+    public Bounds cube;
 
     
 
@@ -47,6 +47,14 @@ public class Node : MonoBehaviour
     public bool up;
     [HideInInspector]
     public bool down;
+    [HideInInspector]
+    public bool left;
+    [HideInInspector]
+    public bool right;
+    [HideInInspector]
+    public bool forward;
+    [HideInInspector]
+    public bool back;
 
     public float raytimer;
 
@@ -80,18 +88,23 @@ public class Node : MonoBehaviour
         {
             Gizmos.color = Color.red;
 
-            Gizmos.DrawWireCube(size.center, size.size);
-           
+            Gizmos.DrawWireCube(cube.center, cube.size);
+
         }
         else
         {
-            Gizmos.color = Color.green;
+            if (type == NodeManager.NodeTypes.Door)
+            {
+                Gizmos.color = Color.cyan;
+            }
+            else
+                Gizmos.color = Color.green;
 
-            Gizmos.DrawWireCube(size.center, size.size);
+            Gizmos.DrawWireCube(cube.center, cube.size);
             foreach (Node n in connectingNodes)
             {
                 Gizmos.color = Color.blue;
-                Gizmos.DrawLine(size.center, n.size.center);
+                Gizmos.DrawLine(cube.center, n.cube.center);
             }
         }
 
@@ -118,6 +131,11 @@ public class Node : MonoBehaviour
         Debug.Log("raycasting");
         Vector3 upVec = transform.TransformDirection(Vector3.up);
         Vector3 downVec = transform.TransformDirection(Vector3.down);
+        Vector3 leftVec = transform.TransformDirection(Vector3.left);
+        Vector3 rightVec = transform.TransformDirection(Vector3.right);
+        Vector3 backVec = transform.TransformDirection(Vector3.back);
+        Vector3 forwardVec = transform.TransformDirection(Vector3.forward);
+        Vector3 maxBWorldPos = myNodeManager.nodeSystems[myNodeSysId].area.center - (myNodeManager.nodeSystems[myNodeSysId].area.max / 2);
         if (raycasting)
         {
          
@@ -127,25 +145,71 @@ public class Node : MonoBehaviour
 
 
 
-            if (Physics.Raycast((size.center), upVec, 100000))
+            if (Physics.Raycast((cube.center), upVec, 100000))
             {
                 up = true;
 
             }
 
-            if (Physics.Raycast(size.center, downVec, 100000))
+            if (Physics.Raycast(cube.center, downVec, 100000))
             {
                 down = true;
 
             }
+            if (type != NodeManager.NodeTypes.Invalid)
+            {
+                if (x == 0)
+                {
+                    if (!Physics.Raycast(cube.center, leftVec, 5))
+                    {
+                        type = NodeManager.NodeTypes.Door;
 
 
-            if (t > raytimer)
+                    }
+                }
+                else if (x == myNodeManager.nodeSystems[myNodeSysId].widht - 1)
+                {
+                    if (!Physics.Raycast(cube.center, rightVec, 5))
+                    {
+                        type = NodeManager.NodeTypes.Door;
+
+
+                    }
+                }
+                else
+                {
+
+                    if (z == 0)
+                    {
+                        if (!Physics.Raycast(cube.center, backVec, 5))
+                        {
+                            type = NodeManager.NodeTypes.Door;
+
+
+                        }
+                    }
+                    else if (z == myNodeManager.nodeSystems[myNodeSysId].depth - 1)
+                    {
+                        if (!Physics.Raycast(cube.center, forwardVec, 5))
+                        {
+                            type = NodeManager.NodeTypes.Door;
+
+
+                        }
+                    }
+                }
+            }
+
+
+                if (t > raytimer)
             {
                 Debug.Log("china");
                 delete = true;
                 raycasting = false;
             }
+
+         
+
 
             if (delete)
             {
@@ -155,6 +219,7 @@ public class Node : MonoBehaviour
                     type = NodeManager.NodeTypes.Invalid;
 
                 }
+               
                 delete = false;
 
             }
@@ -260,11 +325,13 @@ public class Node : MonoBehaviour
             foreach (GameObject go in myNodeManager.level)
             {
                 Collider col = go.GetComponent<Collider>();
-                overlapping = size.Intersects(col.bounds);
+                overlapping = cube.Intersects(col.bounds);
+          
                 if (overlapping)
                 {
                 Undo.RecordObject(this, "changed");
                 type = NodeManager.NodeTypes.Invalid;
+               
                     break;  
                 
                 }
@@ -272,8 +339,15 @@ public class Node : MonoBehaviour
             
               
             }
-        if (!overlapping)
+          
+      
+        if (!overlapping &&type!= NodeManager.NodeTypes.Invalid)
         {
+
+            if (type == NodeManager.NodeTypes.Door)
+            {
+                myNodeManager.nodeSystems[myNodeSysId].doorNodes.Add(this);
+            }
             Debug.Log("connecy");
             ConnectNodes();
         }

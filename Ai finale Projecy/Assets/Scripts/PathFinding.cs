@@ -63,9 +63,9 @@ public class PathFinding : MonoBehaviour
             //Debug.Log(indexPos);
 
             //Debug.Log(boundingBox);
-            bool nextNode = pathToGoal[indexPos].size.Contains(this.transform.position);
+            bool nextNode = pathToGoal[indexPos].cube.Contains(this.transform.position);
             step = speed * Time.deltaTime;
-            Vector3 moveTo = Vector3.MoveTowards(transform.position, pathToGoal[indexPos].size.center, step);
+            Vector3 moveTo = Vector3.MoveTowards(transform.position, pathToGoal[indexPos].cube.center, step);
        
             transform.position = moveTo;
             if (nextNode)
@@ -94,7 +94,7 @@ public class PathFinding : MonoBehaviour
                     if (index < pathToGoal.Count)
                     {
 
-                        Debug.DrawLine(n.size.center, pathToGoal[index].size.center, Color.cyan, 5);
+                        Debug.DrawLine(n.cube.center, pathToGoal[index].cube.center, Color.cyan, 5);
                     }
 
                 }
@@ -141,7 +141,7 @@ public class PathFinding : MonoBehaviour
             n.closed = false;
             if (first)
             {
-                if (n.size.Contains(this.transform.position))
+                if (n.cube.Contains(this.transform.position))
                     start = n;
             }
            

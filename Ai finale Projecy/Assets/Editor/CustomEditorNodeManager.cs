@@ -65,6 +65,8 @@ public class CustomEditorNodeManager : Editor {
 
         }
 
+       
+
     }
    
 
@@ -83,7 +85,7 @@ public class CustomEditorNodeManager : Editor {
                 foreach (GameObject go in myTarget.level)
                 {
                     Collider col = go.GetComponent<Collider>();
-                    overlapping = n.size.Intersects(col.bounds);
+                    overlapping = n.cube.Intersects(col.bounds);
                     if (overlapping)
                     {
 
@@ -207,10 +209,11 @@ public class CustomEditorNodeManager : Editor {
         }
         foreach (NodeManager.NodeSystem ns in myTarget.nodeSystems)
         {
+            ns.doorNodes.Clear();
             foreach (Node n in ns.nodes)
             {
 
-              n.myNodeSysId = ns.id;
+                n.myNodeSysId = ns.id;
                 n.myNodeManager = myTarget;
                 n.Activate();
                
