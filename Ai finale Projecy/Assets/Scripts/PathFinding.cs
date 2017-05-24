@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PathFinding : MonoBehaviour
 {
+    public NodeManager myNodeManager;
     public bool checkStartGoal;
     public bool foundGoal;
 
@@ -43,7 +44,7 @@ public class PathFinding : MonoBehaviour
 
 
             //Node destination = MoveToRandomPoint();
-            PathFind(GameManager.instance.playesCurrentNode);
+            PathFind(AiManager.instance.playesCurrentNodeFlying);
             firstMove = true;
           
            
@@ -112,13 +113,13 @@ public class PathFinding : MonoBehaviour
 
     public Node MoveToRandomPoint()
     {
-        int rnd = Random.Range(0, NodeManager.singelton.nodeSystems[nodeSystem].nodes.Count - 1);
-        while (NodeManager.singelton.nodeSystems[nodeSystem].nodes[rnd].type == NodeManager.NodeTypes.Invalid)
+        int rnd = Random.Range(0,myNodeManager.nodeSystems[nodeSystem].nodes.Count - 1);
+        while (myNodeManager.nodeSystems[nodeSystem].nodes[rnd].type == NodeManager.NodeTypes.Invalid)
         {
-            rnd = Random.Range(0, NodeManager.singelton.nodeSystems[nodeSystem].nodes.Count - 1);
+            rnd = Random.Range(0, myNodeManager.nodeSystems[nodeSystem].nodes.Count - 1);
         }
         Debug.Log(rnd);
-        Node temp = NodeManager.singelton.nodeSystems[nodeSystem].nodes[rnd];
+        Node temp = myNodeManager.nodeSystems[nodeSystem].nodes[rnd];
         return temp;
     }
 
@@ -136,7 +137,7 @@ public class PathFinding : MonoBehaviour
         {
             start = current;
         }
-        foreach (Node n in NodeManager.singelton.nodeSystems[nodeSystem].nodes)
+        foreach (Node n in myNodeManager.nodeSystems[nodeSystem].nodes)
         {
             n.closed = false;
             if (first)
@@ -148,7 +149,7 @@ public class PathFinding : MonoBehaviour
         }
         if (end.myNodeSysId != start.myNodeSysId)
         {
-            foreach (Node n in NodeManager.singelton.nodeSystems[end.myNodeSysId].nodes)
+            foreach (Node n in myNodeManager.nodeSystems[end.myNodeSysId].nodes)
             {
                 n.closed = false;
             }
@@ -250,7 +251,7 @@ public class PathFinding : MonoBehaviour
 
             int id = currentNode.id;
 
-            foreach (NodeManager.NodeSystem ns in NodeManager.singelton.nodeSystems)
+            foreach (NodeManager.NodeSystem ns in myNodeManager.nodeSystems)
             {
                 if (currentNode.myNodeSysId == ns.id)
                 {

@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MoveToMouse : MonoBehaviour {
-   
+    public NodeManager aiFlying;
+    public NodeManager aiCharging;
     Vector3 movePos;
     public float speed;
     public Vector3 pos;
-    public int nodeSys;
-    public Node cn;
+    public int nodeSysFlying;
+    public int nodeSysCharging;
+    public Node cnFlying;
+    public Node cnCharging;
+    
 
     // Use this for initialization
     void Start () {
@@ -18,21 +22,38 @@ public class MoveToMouse : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (cn == null)
+        if (cnFlying == null)
         {
-            foreach (Node n in NodeManager.singelton.nodeSystems[nodeSys].nodes)
+            foreach (Node n in aiFlying.nodeSystems[nodeSysFlying].nodes)
             {
                 if (n.cube.Contains(transform.position))
                 {
-                    cn = n;
-                    GameManager.instance.playesCurrentNode = cn;
+                    cnFlying = n;
+                    n.myNodeSysId = nodeSysFlying;
+                    AiManager.instance.playesCurrentNodeFlying = cnFlying;
                     return;
                 }
 
 
             }
         }
-       
+
+        if (cnCharging == null)
+        {
+            foreach (Node n in aiCharging.nodeSystems[nodeSysFlying].nodes)
+            {
+                if (n.cube.Contains(transform.position))
+                {
+                    cnCharging = n;
+                    n.myNodeSysId = nodeSysCharging;
+                    AiManager.instance.playesCurrentNodeCharging = cnCharging;
+                    return;
+                }
+
+
+            }
+        }
+
         if (Input.GetMouseButtonDown(0))
         {
             RaycastHit hit;
@@ -48,52 +69,28 @@ public class MoveToMouse : MonoBehaviour {
         float step = speed * Time.deltaTime;
         transform.position = Vector3.MoveTowards(transform.position, movePos, step);
 
-        foreach (Node n in cn.connectingNodes)
+        foreach (Node n in cnFlying.connectingNodes)
         {
             if (n.cube.Contains(transform.position))
             {
-                cn = n;
-                GameManager.instance.playesCurrentNode = cn;
+                cnFlying = n;
+                n.myNodeSysId = nodeSysFlying;
+                AiManager.instance.playesCurrentNodeFlying = cnFlying;
+                return;
+            }
+        }
+
+        foreach (Node n in cnCharging.connectingNodes)
+        {
+            if (n.cube.Contains(transform.position))
+            {
+                cnCharging = n;
+                n.myNodeSysId = nodeSysCharging;
+                AiManager.instance.playesCurrentNodeCharging = cnCharging;
                 return;
             }
         }
     }
 
-    //public Vector3 MyPos(float width, float height, float depth)
-    //{
-    //    float difX = pos.x - transform.position.x;
-
-    //    float difY = pos.y - transform.position.y;
-    //    float difZ = pos.z - transform.position.z;
-    //    if (difX > width)
-    //    {
-    //        ++xp;
-    //    }
-    //    else if (difX < 0)
-    //    {
-    //        --xp;
-    //    }
-
-    //    if (difY > height)
-    //    {
-    //        ++yp;
-    //    }
-    //    else if (difY < 0)
-    //    {
-    //        --yp;
-    //    }
-
-    //    if (difZ > depth)
-    //    {
-    //        ++zp;
-    //    }
-    //    else if (difZ < 0)
-    //    {
-    //        --zp;
-    //    }
-
-    //    Vector3 posInSys = new Vector3(xp, yp, zp);
-    //    return posInSys;
-           
-    //}
+   
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class NodeManager : MonoBehaviour
 {
-    public static NodeManager singelton;
+   
     
     public GameObject character;
     public GameObject node;
@@ -59,13 +59,7 @@ public class NodeManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        if (singelton == null)
-            //if not, set it to this.
-            singelton = this;
-        //If instance already exists:
-        else if (singelton != this)
-            //Destroy this, this enforces our singleton pattern so there can only be one instance of SoundManager.
-            Destroy(gameObject);
+       
 
 
     }

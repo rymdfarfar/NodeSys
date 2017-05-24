@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour {
-    public static GameManager instance;
+public class AiManager : MonoBehaviour {
+    public static AiManager instance;
     public GameObject player;
     public MoveToMouse playerScript;
-    public Node playesCurrentNode;
+    public Node playesCurrentNodeFlying;
+    public Node playesCurrentNodeCharging;
     public float moveDistance;
     public float aiTimer;
     public bool AiMove;
