@@ -43,8 +43,8 @@ public class PathFinding : MonoBehaviour
 
 
 
-            //Node destination = MoveToRandomPoint();
-            PathFind(AiManager.instance.playesCurrentNodeFlying);
+            Node destination = MoveToRandomPoint();
+            PathFind(destination);
             firstMove = true;
           
            

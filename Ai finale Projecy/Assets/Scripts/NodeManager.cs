@@ -14,6 +14,7 @@ public class NodeManager : MonoBehaviour
     public List<NodeSystem> nodeSystems;
 
     public float maxDistanceBetweenDoors;
+    public bool diagonally;
 
     [HideInInspector]
     public List<Node> tempNodes;
@@ -184,6 +185,8 @@ public class NodeManager : MonoBehaviour
         nodeTemp.index = x + z * xNumber + y * (xNumber * zNumber);
         nodeTemp.myNodeManager = this;
         nodeTemp.type = NodeTypes.Standard;
+        if (diagonally)
+            nodeTemp.diagonally = true;
         //nodeTemp.myNodeSysId = nodeSystems.Count + 1;
         temp.name = ("Node" + " " + nodeTemp.id.ToString());
         tempNodes.Add(nodeTemp);

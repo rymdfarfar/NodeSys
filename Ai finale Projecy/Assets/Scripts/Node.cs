@@ -13,6 +13,7 @@ public class Node : MonoBehaviour
     public NodeManager myNodeManager;
     //[HideInInspector]
     public int myNodeSysId;
+    public bool diagonally;
    
     public NodeManager.NodeTypes type;
     public List<Node> connectingNodes;
@@ -90,6 +91,7 @@ public class Node : MonoBehaviour
 
             Gizmos.DrawWireCube(cube.center, cube.size);
 
+          
         }
         else
         {
@@ -106,8 +108,14 @@ public class Node : MonoBehaviour
                 Gizmos.color = Color.green;
 
             Gizmos.DrawWireCube(cube.center, cube.size);
-          
+
+            Gizmos.color = Color.blue;
+            foreach (Node n in connectingNodes)
+            {
+                Gizmos.DrawLine(cube.center, n.cube.center);
+            }
         }
+
 
     }
 
@@ -310,11 +318,234 @@ public class Node : MonoBehaviour
             }
 
 
-         
+            //diagonally
+            if (diagonally)
+            {
+                //Forward right
+
+                int number2 = z + 1;
+                int number3 = x + 1;
+                index = number3 + number2 * myNodeManager.nodeSystems[myNodeSysId].widht + y * (myNodeManager.nodeSystems[myNodeSysId].widht * myNodeManager.nodeSystems[myNodeSysId].depth);
+                if (index >= 0 && index < myNodeManager.nodeSystems[myNodeSysId].nodes.Count && number2 <= myNodeManager.nodeSystems[myNodeSysId].depth - 1 && number3 <= myNodeManager.nodeSystems[myNodeSysId].widht - 1)
+                {
+                    if (myNodeManager.nodeSystems[myNodeSysId].nodes[index].type != NodeManager.NodeTypes.Invalid)
+                        connectingNodes.Add(myNodeManager.nodeSystems[myNodeSysId].nodes[index]);
+                }
+
+                //Forward left
+
+                number2 = z + 1;
+                number3 = x - 1;
+                index = number3 + number2 * myNodeManager.nodeSystems[myNodeSysId].widht + y * (myNodeManager.nodeSystems[myNodeSysId].widht * myNodeManager.nodeSystems[myNodeSysId].depth);
+                if (index >= 0 && index < myNodeManager.nodeSystems[myNodeSysId].nodes.Count && number2 <= myNodeManager.nodeSystems[myNodeSysId].depth - 1 && number3 >= 0)
+                {
+                    if (myNodeManager.nodeSystems[myNodeSysId].nodes[index].type != NodeManager.NodeTypes.Invalid)
+                        connectingNodes.Add(myNodeManager.nodeSystems[myNodeSysId].nodes[index]);
+                }
+
+                //Backwards right
+
+                number2 = z - 1;
+                number3 = x + 1;
+                index = number3 + number2 * myNodeManager.nodeSystems[myNodeSysId].widht + y * (myNodeManager.nodeSystems[myNodeSysId].widht * myNodeManager.nodeSystems[myNodeSysId].depth);
+                if (index >= 0 && index < myNodeManager.nodeSystems[myNodeSysId].nodes.Count && number2 >= 0 && number3 <= myNodeManager.nodeSystems[myNodeSysId].widht - 1)
+                {
+                    if (myNodeManager.nodeSystems[myNodeSysId].nodes[index].type != NodeManager.NodeTypes.Invalid)
+                        connectingNodes.Add(myNodeManager.nodeSystems[myNodeSysId].nodes[index]);
+                }
+
+                //Backwards left
+
+                number2 = z - 1;
+                number3 = x - 1;
+                index = number3 + number2 * myNodeManager.nodeSystems[myNodeSysId].widht + y * (myNodeManager.nodeSystems[myNodeSysId].widht * myNodeManager.nodeSystems[myNodeSysId].depth);
+                if (index >= 0 && index < myNodeManager.nodeSystems[myNodeSysId].nodes.Count && number2 >= 0 - 1 && number3 >= 0)
+                {
+                    if (myNodeManager.nodeSystems[myNodeSysId].nodes[index].type != NodeManager.NodeTypes.Invalid)
+                        connectingNodes.Add(myNodeManager.nodeSystems[myNodeSysId].nodes[index]);
+                }
+
+
+
+                //Top
+
+                //Right
+                number = y + 1;
+                number2 = x + 1;
+                index = number2 + z * myNodeManager.nodeSystems[myNodeSysId].widht + number * (myNodeManager.nodeSystems[myNodeSysId].widht * myNodeManager.nodeSystems[myNodeSysId].depth);
+                if (index >= 0 && index < myNodeManager.nodeSystems[myNodeSysId].nodes.Count && number <= myNodeManager.nodeSystems[myNodeSysId].height - 1 && number2 <= myNodeManager.nodeSystems[myNodeSysId].widht - 1)
+                {
+                    if (myNodeManager.nodeSystems[myNodeSysId].nodes[index].type != NodeManager.NodeTypes.Invalid)
+                        connectingNodes.Add(myNodeManager.nodeSystems[myNodeSysId].nodes[index]);
+                }
+
+                //Left
+                number = y + 1;
+                number2 = x - 1;
+                index = number2 + z * myNodeManager.nodeSystems[myNodeSysId].widht + number * (myNodeManager.nodeSystems[myNodeSysId].widht * myNodeManager.nodeSystems[myNodeSysId].depth);
+                if (index >= 0 && index < myNodeManager.nodeSystems[myNodeSysId].nodes.Count && number <= myNodeManager.nodeSystems[myNodeSysId].height - 1 && number2 >= 0)
+                {
+                    if (myNodeManager.nodeSystems[myNodeSysId].nodes[index].type != NodeManager.NodeTypes.Invalid)
+                        connectingNodes.Add(myNodeManager.nodeSystems[myNodeSysId].nodes[index]);
+                }
+
+                //Forward 
+                number = y + 1;
+                number2 = z + 1;
+                index = x + number2 * myNodeManager.nodeSystems[myNodeSysId].widht + number * (myNodeManager.nodeSystems[myNodeSysId].widht * myNodeManager.nodeSystems[myNodeSysId].depth);
+                if (index >= 0 && index < myNodeManager.nodeSystems[myNodeSysId].nodes.Count && number <= myNodeManager.nodeSystems[myNodeSysId].height - 1 && number2 <= myNodeManager.nodeSystems[myNodeSysId].depth - 1)
+                {
+                    if (myNodeManager.nodeSystems[myNodeSysId].nodes[index].type != NodeManager.NodeTypes.Invalid)
+                        connectingNodes.Add(myNodeManager.nodeSystems[myNodeSysId].nodes[index]);
+                }
+
+                //Backward
+                number = y + 1;
+                number2 = z - 1;
+                index = x + number2 * myNodeManager.nodeSystems[myNodeSysId].widht + number * (myNodeManager.nodeSystems[myNodeSysId].widht * myNodeManager.nodeSystems[myNodeSysId].depth);
+                if (index >= 0 && index < myNodeManager.nodeSystems[myNodeSysId].nodes.Count && number <= myNodeManager.nodeSystems[myNodeSysId].height - 1 && number2 >= 0)
+                {
+                    if (myNodeManager.nodeSystems[myNodeSysId].nodes[index].type != NodeManager.NodeTypes.Invalid)
+                        connectingNodes.Add(myNodeManager.nodeSystems[myNodeSysId].nodes[index]);
+                }
+
+                //Forward right
+                number = y + 1;
+                number2 = z + 1;
+                number3 = x + 1;
+                index = number3 + number2 * myNodeManager.nodeSystems[myNodeSysId].widht + number * (myNodeManager.nodeSystems[myNodeSysId].widht * myNodeManager.nodeSystems[myNodeSysId].depth);
+                if (index >= 0 && index < myNodeManager.nodeSystems[myNodeSysId].nodes.Count && number <= myNodeManager.nodeSystems[myNodeSysId].height - 1 && number2 <= myNodeManager.nodeSystems[myNodeSysId].depth - 1 && number3 <= myNodeManager.nodeSystems[myNodeSysId].widht - 1)
+                {
+                    if (myNodeManager.nodeSystems[myNodeSysId].nodes[index].type != NodeManager.NodeTypes.Invalid)
+                        connectingNodes.Add(myNodeManager.nodeSystems[myNodeSysId].nodes[index]);
+                }
+
+                //Forward left
+                number = y + 1;
+                number2 = z + 1;
+                number3 = x - 1;
+                index = number3 + number2 * myNodeManager.nodeSystems[myNodeSysId].widht + number * (myNodeManager.nodeSystems[myNodeSysId].widht * myNodeManager.nodeSystems[myNodeSysId].depth);
+                if (index >= 0 && index < myNodeManager.nodeSystems[myNodeSysId].nodes.Count && number <= myNodeManager.nodeSystems[myNodeSysId].height - 1 && number2 <= myNodeManager.nodeSystems[myNodeSysId].depth - 1 && number3 >= 0)
+                {
+                    if (myNodeManager.nodeSystems[myNodeSysId].nodes[index].type != NodeManager.NodeTypes.Invalid)
+                        connectingNodes.Add(myNodeManager.nodeSystems[myNodeSysId].nodes[index]);
+                }
+
+                //Backwards right
+                number = y + 1;
+                number2 = z - 1;
+                number3 = x + 1;
+                index = number3 + number2 * myNodeManager.nodeSystems[myNodeSysId].widht + number * (myNodeManager.nodeSystems[myNodeSysId].widht * myNodeManager.nodeSystems[myNodeSysId].depth);
+                if (index >= 0 && index < myNodeManager.nodeSystems[myNodeSysId].nodes.Count && number <= myNodeManager.nodeSystems[myNodeSysId].height - 1 && number2 >= 0 && number3 <= myNodeManager.nodeSystems[myNodeSysId].widht - 1)
+                {
+                    if (myNodeManager.nodeSystems[myNodeSysId].nodes[index].type != NodeManager.NodeTypes.Invalid)
+                        connectingNodes.Add(myNodeManager.nodeSystems[myNodeSysId].nodes[index]);
+                }
+
+                //Backwards left
+                number = y + 1;
+                number2 = z - 1;
+                number3 = x - 1;
+                index = number3 + number2 * myNodeManager.nodeSystems[myNodeSysId].widht + number * (myNodeManager.nodeSystems[myNodeSysId].widht * myNodeManager.nodeSystems[myNodeSysId].depth);
+                if (index >= 0 && index < myNodeManager.nodeSystems[myNodeSysId].nodes.Count && number <= myNodeManager.nodeSystems[myNodeSysId].height - 1 && number2 >= 0 - 1 && number3 >= 0)
+                {
+                    if (myNodeManager.nodeSystems[myNodeSysId].nodes[index].type != NodeManager.NodeTypes.Invalid)
+                        connectingNodes.Add(myNodeManager.nodeSystems[myNodeSysId].nodes[index]);
+                }
+
+                //Botttom
+                //Right
+                number = y - 1;
+                number2 = x + 1;
+                index = number2 + z * myNodeManager.nodeSystems[myNodeSysId].widht + number * (myNodeManager.nodeSystems[myNodeSysId].widht * myNodeManager.nodeSystems[myNodeSysId].depth);
+                if (index >= 0 && index < myNodeManager.nodeSystems[myNodeSysId].nodes.Count && number >= 0 && number2 <= myNodeManager.nodeSystems[myNodeSysId].widht - 1)
+                {
+                    if (myNodeManager.nodeSystems[myNodeSysId].nodes[index].type != NodeManager.NodeTypes.Invalid)
+                        connectingNodes.Add(myNodeManager.nodeSystems[myNodeSysId].nodes[index]);
+                }
+
+                //Left
+                number = y - 1;
+                number2 = x - 1;
+                index = number2 + z * myNodeManager.nodeSystems[myNodeSysId].widht + number * (myNodeManager.nodeSystems[myNodeSysId].widht * myNodeManager.nodeSystems[myNodeSysId].depth);
+                if (index >= 0 && index < myNodeManager.nodeSystems[myNodeSysId].nodes.Count && number >= 0 && number2 >= 0)
+                {
+                    if (myNodeManager.nodeSystems[myNodeSysId].nodes[index].type != NodeManager.NodeTypes.Invalid)
+                        connectingNodes.Add(myNodeManager.nodeSystems[myNodeSysId].nodes[index]);
+                }
+
+                //Forward 
+                number = y - 1;
+                number2 = z + 1;
+                index = x + number2 * myNodeManager.nodeSystems[myNodeSysId].widht + number * (myNodeManager.nodeSystems[myNodeSysId].widht * myNodeManager.nodeSystems[myNodeSysId].depth);
+                if (index >= 0 && index < myNodeManager.nodeSystems[myNodeSysId].nodes.Count && number >= 0 && number2 <= myNodeManager.nodeSystems[myNodeSysId].depth - 1)
+                {
+                    if (myNodeManager.nodeSystems[myNodeSysId].nodes[index].type != NodeManager.NodeTypes.Invalid)
+                        connectingNodes.Add(myNodeManager.nodeSystems[myNodeSysId].nodes[index]);
+                }
+
+                //Backward
+                number = y - 1;
+                number2 = z - 1;
+                index = x + number2 * myNodeManager.nodeSystems[myNodeSysId].widht + number * (myNodeManager.nodeSystems[myNodeSysId].widht * myNodeManager.nodeSystems[myNodeSysId].depth);
+                if (index >= 0 && index < myNodeManager.nodeSystems[myNodeSysId].nodes.Count && number >= 0 && number2 >= 0)
+                {
+                    if (myNodeManager.nodeSystems[myNodeSysId].nodes[index].type != NodeManager.NodeTypes.Invalid)
+                        connectingNodes.Add(myNodeManager.nodeSystems[myNodeSysId].nodes[index]);
+                }
+
+                //Forward right
+                number = y - 1;
+                number2 = z + 1;
+                number3 = x + 1;
+                index = number3 + number2 * myNodeManager.nodeSystems[myNodeSysId].widht + number * (myNodeManager.nodeSystems[myNodeSysId].widht * myNodeManager.nodeSystems[myNodeSysId].depth);
+                if (index >= 0 && index < myNodeManager.nodeSystems[myNodeSysId].nodes.Count && number >= 0 && number2 <= myNodeManager.nodeSystems[myNodeSysId].depth - 1 && number3 <= myNodeManager.nodeSystems[myNodeSysId].widht - 1)
+                {
+                    if (myNodeManager.nodeSystems[myNodeSysId].nodes[index].type != NodeManager.NodeTypes.Invalid)
+                        connectingNodes.Add(myNodeManager.nodeSystems[myNodeSysId].nodes[index]);
+                }
+
+                //Forward left
+                number = y - 1;
+                number2 = z + 1;
+                number3 = x - 1;
+                index = number3 + number2 * myNodeManager.nodeSystems[myNodeSysId].widht + number * (myNodeManager.nodeSystems[myNodeSysId].widht * myNodeManager.nodeSystems[myNodeSysId].depth);
+                if (index >= 0 && index < myNodeManager.nodeSystems[myNodeSysId].nodes.Count && number >= 0 && number2 <= myNodeManager.nodeSystems[myNodeSysId].depth - 1 && number3 >= 0)
+                {
+                    if (myNodeManager.nodeSystems[myNodeSysId].nodes[index].type != NodeManager.NodeTypes.Invalid)
+                        connectingNodes.Add(myNodeManager.nodeSystems[myNodeSysId].nodes[index]);
+                }
+
+                //Backwards right
+                number = y - 1;
+                number2 = z - 1;
+                number3 = x + 1;
+                index = number3 + number2 * myNodeManager.nodeSystems[myNodeSysId].widht + number * (myNodeManager.nodeSystems[myNodeSysId].widht * myNodeManager.nodeSystems[myNodeSysId].depth);
+                if (index >= 0 && index < myNodeManager.nodeSystems[myNodeSysId].nodes.Count && number >= 0 && number2 >= 0 && number3 <= myNodeManager.nodeSystems[myNodeSysId].widht - 1)
+                {
+                    if (myNodeManager.nodeSystems[myNodeSysId].nodes[index].type != NodeManager.NodeTypes.Invalid)
+                        connectingNodes.Add(myNodeManager.nodeSystems[myNodeSysId].nodes[index]);
+                }
+
+                //Backwards left
+                number = y - 1;
+                number2 = z - 1;
+                number3 = x - 1;
+                index = number3 + number2 * myNodeManager.nodeSystems[myNodeSysId].widht + number * (myNodeManager.nodeSystems[myNodeSysId].widht * myNodeManager.nodeSystems[myNodeSysId].depth);
+                if (index >= 0 && index < myNodeManager.nodeSystems[myNodeSysId].nodes.Count && number >= 0 && number2 >= 0 - 1 && number3 >= 0)
+                {
+                    if (myNodeManager.nodeSystems[myNodeSysId].nodes[index].type != NodeManager.NodeTypes.Invalid)
+                        connectingNodes.Add(myNodeManager.nodeSystems[myNodeSysId].nodes[index]);
+                }
+
+            }
+            //
+
+
         }
 
-        
-       
+
+
 
 
     }
