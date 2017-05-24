@@ -28,7 +28,7 @@ public class Node : MonoBehaviour
     public float H;
     [HideInInspector]
     public float F;
-    [HideInInspector]
+ 
     public Vector3 pos;
     public Node parent;
     [HideInInspector]
@@ -96,25 +96,26 @@ public class Node : MonoBehaviour
             if (type == NodeManager.NodeTypes.Door)
             {
                 Gizmos.color = Color.cyan;
+                foreach (Node n in connectingNodes)
+                {
+                    Gizmos.color = Color.blue;
+                    Gizmos.DrawLine(cube.center, n.cube.center);
+                }
             }
             else
                 Gizmos.color = Color.green;
 
             Gizmos.DrawWireCube(cube.center, cube.size);
-            foreach (Node n in connectingNodes)
-            {
-                Gizmos.color = Color.blue;
-                Gizmos.DrawLine(cube.center, n.cube.center);
-            }
+          
         }
 
     }
 
     public float ManHattanDistance(Node nodeEnd)
     {
-        float x = Mathf.Abs(pos.x - nodeEnd.pos.x);
-        float y = Mathf.Abs(pos.y - nodeEnd.pos.y);
-        float z = Mathf.Abs(pos.z - nodeEnd.pos.z);
+        float x = Mathf.Abs(cube.center.x - nodeEnd.cube.center.x);
+        float y = Mathf.Abs(cube.center.y - nodeEnd.cube.center.y);
+        float z = Mathf.Abs(cube.center.z - nodeEnd.cube.center.z);
 
         return x + y + z;
     }
@@ -135,7 +136,7 @@ public class Node : MonoBehaviour
         Vector3 rightVec = transform.TransformDirection(Vector3.right);
         Vector3 backVec = transform.TransformDirection(Vector3.back);
         Vector3 forwardVec = transform.TransformDirection(Vector3.forward);
-        Vector3 maxBWorldPos = myNodeManager.nodeSystems[myNodeSysId].area.center - (myNodeManager.nodeSystems[myNodeSysId].area.max / 2);
+
         if (raycasting)
         {
          
@@ -156,6 +157,8 @@ public class Node : MonoBehaviour
                 down = true;
 
             }
+
+            //Checks if it's of node is a door
             if (type != NodeManager.NodeTypes.Invalid)
             {
                 if (x == 0)
@@ -309,6 +312,8 @@ public class Node : MonoBehaviour
 
          
         }
+
+        
        
 
 
@@ -362,15 +367,46 @@ public class Node : MonoBehaviour
 
     }
 
+    public void ConnectDoors()
+    {
+
+        foreach (NodeManager.NodeSystem ns in myNodeManager.nodeSystems)
+        {
+            if (ns != myNodeManager.nodeSystems[myNodeSysId])
+            {
+                foreach (Node n in ns.doorNodes)
+                {
+
+                    if (type == NodeManager.NodeTypes.Door)
+                    {
+                        Debug.Log("raycastingDoor");
+
+                      
+                        if (Physics.Raycast(cube.center , n.cube.center,myNodeManager.maxDistanceBetweenDoors))
+                        {
+                            Undo.RecordObject(this, "changed");
+                            connectingNodes.Add(n);
+                            if(!n.connectingNodes.Contains(this))
+                                n.connectingNodes.Add(this);
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+
     public void Activate()
     {
         Undo.RecordObject(this, "changed");
+        connectingNodes.Clear();
         closed = false;
         type = NodeManager.NodeTypes.Standard;
         raycasting = true;
         raytimer = 0.1f;
       
         EditorApplication.update += EditorUpdate;
+      
         Debug.Log("activate");
       
        

@@ -5,15 +5,15 @@ using UnityEngine;
 [System.Serializable]
 public class NodeManager : MonoBehaviour
 {
-
+    public static NodeManager singelton;
     
     public GameObject character;
     public GameObject node;
     public Bounds dimensionsOfRoom;
     public string[] tags;
     public List<NodeSystem> nodeSystems;
-   
 
+    public float maxDistanceBetweenDoors;
 
     [HideInInspector]
     public List<Node> tempNodes;
@@ -50,7 +50,8 @@ public class NodeManager : MonoBehaviour
     {
         Door,
         Standard,
-        Invalid
+        Invalid,
+        Hallway
     }
 
 
@@ -58,9 +59,15 @@ public class NodeManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        if (singelton == null)
+            //if not, set it to this.
+            singelton = this;
+        //If instance already exists:
+        else if (singelton != this)
+            //Destroy this, this enforces our singleton pattern so there can only be one instance of SoundManager.
+            Destroy(gameObject);
 
-        
-       
+
     }
 
     // Update is called once per frame
@@ -178,7 +185,7 @@ public class NodeManager : MonoBehaviour
         nodeTemp.x = x;
         nodeTemp.y = y;
         nodeTemp.z = z;
-        nodeTemp.pos = new Vector3(x, y, z);
+        //nodeTemp.pos = new Vector3(x, y, z);
         nodeTemp.id = nodesSpawned;
         nodeTemp.index = x + z * xNumber + y * (xNumber * zNumber);
         nodeTemp.myNodeManager = this;

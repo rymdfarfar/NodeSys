@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour {
     public static GameManager instance;
     public GameObject player;
+    public MoveToMouse playerScript;
     public Node playesCurrentNode;
     public float moveDistance;
     public float aiTimer;
@@ -17,12 +18,14 @@ public class GameManager : MonoBehaviour {
             instance = this;
         else if (instance!= this)
             Destroy(this);
+        
+        
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
-
+        
         
 
 	}

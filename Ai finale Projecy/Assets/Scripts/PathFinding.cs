@@ -11,8 +11,8 @@ public class PathFinding : MonoBehaviour
     public List<Node> openList;
    
     public List<Node> pathToGoal;
-    public NodeManager.NodeSystem nodeSys;
-    public NodeManager manager;
+  
+
 
     public Node start;
     public Node end;
@@ -29,7 +29,7 @@ public class PathFinding : MonoBehaviour
     void Start()
     {
         //firstMove = true;
-        nodeSys = manager.nodeSystems[nodeSystem];
+        
         first = true;
         
     }
@@ -41,9 +41,9 @@ public class PathFinding : MonoBehaviour
         {
 
 
-        
-            Node destination =MoveToRandomPoint();
-            PathFind(destination);
+
+            //Node destination = MoveToRandomPoint();
+            PathFind(GameManager.instance.playesCurrentNode);
             firstMove = true;
           
            
@@ -79,7 +79,7 @@ public class PathFinding : MonoBehaviour
             }
 
 
-            if (indexPos == 0)
+            if (indexPos <0)
             {
                 move = false;
                 checkStartGoal = false;
@@ -112,13 +112,13 @@ public class PathFinding : MonoBehaviour
 
     public Node MoveToRandomPoint()
     {
-        int rnd = Random.Range(0, manager.nodeSystems[nodeSystem].nodes.Count - 1);
-        while (nodeSys.nodes[rnd].type == NodeManager.NodeTypes.Invalid)
+        int rnd = Random.Range(0, NodeManager.singelton.nodeSystems[nodeSystem].nodes.Count - 1);
+        while (NodeManager.singelton.nodeSystems[nodeSystem].nodes[rnd].type == NodeManager.NodeTypes.Invalid)
         {
-            rnd = Random.Range(0, manager.nodeSystems[nodeSystem].nodes.Count - 1);
+            rnd = Random.Range(0, NodeManager.singelton.nodeSystems[nodeSystem].nodes.Count - 1);
         }
         Debug.Log(rnd);
-        Node temp = nodeSys.nodes[rnd];
+        Node temp = NodeManager.singelton.nodeSystems[nodeSystem].nodes[rnd];
         return temp;
     }
 
@@ -136,7 +136,7 @@ public class PathFinding : MonoBehaviour
         {
             start = current;
         }
-        foreach (Node n in nodeSys.nodes)
+        foreach (Node n in NodeManager.singelton.nodeSystems[nodeSystem].nodes)
         {
             n.closed = false;
             if (first)
@@ -144,24 +144,21 @@ public class PathFinding : MonoBehaviour
                 if (n.cube.Contains(this.transform.position))
                     start = n;
             }
-           
+
         }
+        if (end.myNodeSysId != start.myNodeSysId)
+        {
+            foreach (Node n in NodeManager.singelton.nodeSystems[end.myNodeSysId].nodes)
+            {
+                n.closed = false;
+            }
+        }
+       
+
+
+
         first = false;
-
-
-
-
-
-
-
-
-
-
-
         end = endPos;
-
-
-
         checkStartGoal = true;
 
         SetStartAndGoal(start, end);
@@ -217,7 +214,7 @@ public class PathFinding : MonoBehaviour
         {
 
             Node currentNode = GetNextNode();
-            if (currentNode.id == end.id)
+            if (currentNode.id == end.id && currentNode.myNodeSysId == end.myNodeSysId)
             {
                 end.parent = currentNode.parent;
                 foundGoal = true;
@@ -253,10 +250,18 @@ public class PathFinding : MonoBehaviour
 
             int id = currentNode.id;
 
-            if (nodeSys.nodes[id].closed || nodeSys.nodes[id].type == NodeManager.NodeTypes.Invalid)
-                return;
+            foreach (NodeManager.NodeSystem ns in NodeManager.singelton.nodeSystems)
+            {
+                if (currentNode.myNodeSysId == ns.id)
+                {
+                    if (ns.nodes[id].closed || ns.nodes[id].type == NodeManager.NodeTypes.Invalid)
+                        return;
+                }
+                
+            }
 
-           
+          
+
 
             currentNode.G = parent.G + newCost;
             currentNode.H = parent.ManHattanDistance(end);
